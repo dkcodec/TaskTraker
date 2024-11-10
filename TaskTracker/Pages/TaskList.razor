@@ -1,0 +1,227 @@
+@page "/"
+@using TaskTracker.Services
+@using TaskTrackerAPI.Data
+@inject TaskService TaskService
+
+<h3 style='display: flex; text-align: center; align-items: center; justify-content: center;'>Task List</h3>
+
+@if (tasks == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div style='margin-bottom: 2rem; display: flex; flex-direction: column; gap: 20px;'>
+        <h4>Add New Task</h4>
+        <input type="text" placeholder="Title" @bind="newTask.Title" 
+        style="
+            width: 100%; 
+            padding: 10px 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;" 
+            onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+            onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+        />
+        <textarea type="text" placeholder="Description" @bind="newTask.Description" 
+        style="
+            width: 100%; 
+            height: 150px;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;" 
+            onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+            onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+        />
+        <input type="date" @bind="newTask.DueDate"
+        style="
+            width: 100%; 
+            padding: 10px 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;" 
+            onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+            onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+        />
+        <button @onclick="AddTask" 
+        style="
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            background-color: #5c8aff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        "
+        onmouseover="this.style.backgroundColor='#486ccc'; this.style.boxShadow='0 6px 12px rgba(72, 108, 204, 0.3)';"
+        onmouseout="this.style.backgroundColor='#5c8aff'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+        onmousedown="this.style.transform='scale(0.95)';"
+        onmouseup="this.style.transform='scale(1)';"
+        >Add</button>
+    </div>
+
+    <h4 style="margin-bottom: 20px;">All Tasks</h4>
+    <ul style="list-style-type: none; margin-left: 0; padding-left: 0;">
+        @foreach (var task in tasks)
+        {
+            <li style="display: flex; align-items: center; gap:2rem; margin-bottom: 1rem;">
+                <input type="checkbox" @bind="task.IsCompleted" 
+                style="
+                    width: 10%;
+                    appearance: none;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #f0f0f0;
+                    border: 2px solid #ddd;
+                    border-radius: 4px;
+                    display: inline-block;
+                    position: relative;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    margin-right: 8px;
+                    "
+                    onfocus="this.style.borderColor='#5c8aff';"
+                    onblur="this.style.borderColor='#ddd';"
+                    onclick="this.style.backgroundColor = this.checked ? '#5c8aff' : '#f0f0f0'; this.style.borderColor = this.checked ? '#5c8aff' : '#ddd';"
+                />
+                <input type="text" @bind="task.Title" 
+                style=" 
+                    width: 30%;
+                    padding: 10px 15px;
+                    font-size: 16px;
+                    font-family: Arial, sans-serif;
+                    border: 2px solid #ddd;
+                    border-radius: 8px;
+                    outline: none;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    color: #333;" 
+                    onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+                    onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+                />
+                <input type="text" @bind="task.Description" 
+                style="
+                    width: 30%;
+                    padding: 10px 15px;
+                    font-size: 16px;
+                    font-family: Arial, sans-serif;
+                    border: 2px solid #ddd;
+                    border-radius: 8px;
+                    outline: none;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    color: #333;" 
+                    onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+                    onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+                />
+                <input type="date" @bind="task.DueDate" 
+                style="
+                    width: 10%;
+                    padding: 10px 15px;
+                    font-size: 16px;
+                    font-family: Arial, sans-serif;
+                    border: 2px solid #ddd;
+                    border-radius: 8px;
+                    outline: none;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    color: #333;" 
+                    onfocus="this.style.borderColor='#5c8aff'; this.style.boxShadow='0 4px 12px rgba(92, 138, 255, 0.3)';" 
+                    onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+                />
+                
+                <button @onclick="() => UpdateTask(task)" 
+                    style="
+                        width: 10%;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        font-family: Arial, sans-serif;
+                        background-color: #5c8aff;
+                        color: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    "
+                    onmouseover="this.style.backgroundColor='#486ccc'; this.style.boxShadow='0 6px 12px rgba(72, 108, 204, 0.3)';"
+                    onmouseout="this.style.backgroundColor='#5c8aff'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+                    onmousedown="this.style.transform='scale(0.95)';"
+                    onmouseup="this.style.transform='scale(1)';"
+                >Save</button>
+                <button @onclick="() => DeleteTask(task.Id)" 
+                    style="
+                        width: 10%;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        font-family: Arial, sans-serif;
+                        background-color: #5c8aff;
+                        color: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    "
+                    onmouseover="this.style.backgroundColor='#486ccc'; this.style.boxShadow='0 6px 12px rgba(72, 108, 204, 0.3)';"
+                    onmouseout="this.style.backgroundColor='#5c8aff'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+                    onmousedown="this.style.transform='scale(0.95)';"
+                    onmouseup="this.style.transform='scale(1)';"
+                >Delete</button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<TaskItem> tasks;
+    private TaskItem newTask = new TaskItem(); // Новая задача для добавления
+
+    protected override async Task OnInitializedAsync()
+    {
+        tasks = await TaskService.GetTasksAsync();
+    }
+
+    private async Task AddTask()
+    {
+        // Добавляем новую задачу через сервис
+        await TaskService.AddTaskAsync(newTask);
+        
+        // Очистка полей новой задачи
+        newTask = new TaskItem();
+        
+        // Обновляем список задач
+        tasks = await TaskService.GetTasksAsync();
+    }
+
+    private async Task UpdateTask(TaskItem task)
+    {
+        await TaskService.UpdateTaskAsync(task);
+        tasks = await TaskService.GetTasksAsync(); // Обновляем список
+    }
+
+    private async Task DeleteTask(int taskId)
+    {
+        await TaskService.DeleteTaskAsync(taskId);
+        tasks = await TaskService.GetTasksAsync(); // Обновляем список после удаления
+    }
+}

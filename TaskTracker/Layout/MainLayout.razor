@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <h2 style="display: flex; text-align: center; align-items: center; justify-content: center; margin-top: 1rem; transition: all;"
+            onmouseover="this.style.color='#5c8aff';" onmouseout="this.style.color='#333';"
+            >Karina Mukhametzhanova</h2>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
